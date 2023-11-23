@@ -15,5 +15,3 @@ class SignUp(generics.CreateAPIView):
         """Отправка сообщения после регистраций на веб сервисе"""
         user = serializer.save()
         send_email_new_user.delay(user.id)
-
-
