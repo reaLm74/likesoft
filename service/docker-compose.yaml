@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis
+
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - /var/lib/postgresql/data
+    env_file:
+      - ../likesoft/.env
+    depends_on:
+      - redis
+
+  web:
+    build: ../likesoft/
+    restart: always
+    volumes:
+      - .:/code
+    command:
+      sh -c "python3 manage.py migrate &&
+      python3 manage.py runserver 0.0.0.0:8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    env_file:
+      - ../likesoft/.env
+
+  celery:
+    build: ../likesoft/
+    tty: true
+    command: celery -A likesoft worker -l INFO
+    depends_on:
+      - web

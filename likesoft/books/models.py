@@ -3,6 +3,7 @@ from django.db import models
 
 User = get_user_model()
 
+"""Ограничение по длине ISBN"""
 LEN_ISBN = 13
 
 
